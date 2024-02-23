@@ -11,9 +11,17 @@ import java.io.IOException;
 
 public class Lettore extends Thread{
     String nomeFile;
-    
+    String copiaFile = null;
+
+    // costruttore per leggere
     public Lettore(String nomeFile){
         this.nomeFile = nomeFile;
+    }
+
+    // costruttore per copiare
+    public Lettore(String nomeFile, String copiaFile){
+        this.nomeFile = nomeFile;
+        this.copiaFile = copiaFile;
     }
     
     /**
@@ -37,9 +45,42 @@ public class Lettore extends Thread{
             System.err.println("Errore in lettura!");
         }
     }
+
+    public void copia(){
+        FileReader fr;
+        int i;
+        try {
+            //1) apro il file
+            fr = new FileReader(nomeFile);
+            String testo = "";
+            //2) leggo carattere per carattere e lo stampo
+            while ((i=fr.read()) != -1)
+                testo += (char) i;
+
+            testo += "\n\r";
+
+            Scrittore copia = new Scrittore(copiaFile, testo);
+            Thread threadCopia = new Thread(copia);
+            copia.run();
+            try {
+                threadCopia.join();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+
+            //3) chiudo il file
+            fr.close();
+        } catch (IOException ex) {
+            System.err.println("Errore in lettura!");
+        }
+    }
     
 
     public void run(){
-        leggi();
+        if(copiaFile == null){
+            leggi();
+        } else {
+            copia();
+        }
     }
 }

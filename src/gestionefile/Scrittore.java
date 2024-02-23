@@ -15,9 +15,11 @@ import java.util.logging.Logger;
 public class Scrittore implements Runnable{
 
     String nomeFile;
+    String testo;
     
-    public Scrittore(String nomeFile){
+    public Scrittore(String nomeFile, String testo){
         this.nomeFile = nomeFile;
+        this.testo = testo;
     }
     
     @Override
@@ -35,7 +37,7 @@ public class Scrittore implements Runnable{
             br = new BufferedWriter(
                     new FileWriter(nomeFile));
             //2) scrivo nel buffer
-            br.write("File in output");
+            br.write(testo);
             br.write("\n\r");
             //3) svuoto il buffer e salvo nel file i dati
             br.flush();         
